@@ -55,8 +55,13 @@ MixMaestro extracts a comprehensive set of audio features from tracks to aid pro
 
     
 
-  3. 
-  4. 
+  3. **Directory Processing Function**:
+
+  This function processes all .wav files in a given directory, extracting features from each file using the extract_features function. It returns a list of dictionaries, each containing the features of an audio file.
+
+  4. **Main Block for Script Execution**:
+ 
+  This block defines the paths to the raw and processed data directories, processes the directory of raw audio files to extract features, and saves the extracted features to a file using joblib.
 
 
         
