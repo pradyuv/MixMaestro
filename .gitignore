@@ -10,3 +10,9 @@ __pycache__/
 
 # TensorFlow Lite models
 *.tflite
+
+# Ignore all WAV files in the raw directory (used to train models that come with application, ideally users would be able to include their own wav files to train the model)
+data/raw/*.wav
+
+# Ensure the models directory is tracked
+!models/
