@@ -1,0 +1,12 @@
+# Python
+__pycache__/
+*.pyc
+
+# C++
+/build/
+
+# Java
+/out/
+
+# TensorFlow Lite models
+*.tflite
