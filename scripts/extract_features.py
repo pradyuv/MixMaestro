@@ -33,7 +33,7 @@ def extract_features(file_path):
         'spectral_rolloff': librosa.feature.spectral_rolloff(y=y, sr=sr).mean(),  # frequency below which a specified percentage of the total spectral energy lies, useful for distinguishing between harmonic/percussive sounds
         'mfcc': librosa.feature.mfcc(y=y, sr=sr, n_mfcc=13).mean(axis=1),  # short term power spectrum (speech and audio processing)
         'chroma_stft': librosa.feature.chroma_stft(y=y, sr=sr).mean(axis=1),  # relates to 12 different pitch classes (notes), harmonic and chordal content analysis
-        'tempo': librosa.beat.tempo(y=y, sr=sr)[0],  # detects tempo of audio
+        'tempo': librosa.feature.rhythm.tempo(y=y, sr=sr)[0],  # detects tempo of audio
         'spectral_contrast': librosa.feature.spectral_contrast(y=y, sr=sr).mean(axis=1),  # measures difference in amplitude between peaks and valleys in the sound spectrum 
         'tonnetz': librosa.feature.tonnetz(y=y, sr=sr).mean(axis=1),  # represents tonal properties, mapping to harmonic space
         'hnr': librosa.effects.harmonic(y=y).mean() / (librosa.effects.percussive(y=y).mean() + 1e-6),  # harmonic-to-noise ratio, distinguishing between harmonic content and noise
@@ -82,13 +82,25 @@ def process_directory(directory):
             
 
 if __name__ == "__main__":
+
     # Define the paths to the raw and processed data (music) directories
-    raw_data_dir = "../data/raw/"
-    processed_data_dir = "../data/processed"   
+    raw_data_dir = os.path.abspath("data/raw/")
+    processed_data_dir = os.path.abspath("data/processed/")
 
-    # Process the directory of raw audio files and extract the features
-    features = process_directory(raw_data_dir)       
+    # Print the directory paths to ensure they are correct
+    print("Raw Data Directory:", raw_data_dir)
+    print("Processed Data Directory:", processed_data_dir)
 
-    # Save extracted features to a file using joblib
-    import joblib
-    joblib.dump(features, os.path.join(processed_data_dir), "features.pkl")
+    # Check if the raw data directory exists
+    if not os.path.exists(raw_data_dir):
+        print(f"Error: The directory {raw_data_dir} does not exist.")
+    else:
+        # Process the directory of raw audio files and extract the features
+        features = process_directory(raw_data_dir)
+
+        # Ensure the processed data directory exists
+        os.makedirs(processed_data_dir, exist_ok=True)
+
+        # Save extracted features to a file using joblib
+        joblib.dump(features, os.path.join(processed_data_dir, "features.pkl"))
+        print(f"Features saved to {os.path.join(processed_data_dir, 'features.pkl')}")
