@@ -4,6 +4,90 @@ The Mix Maestro is a tool aimed to help music producers and enthusiasts by autom
 # Overview
 MixMaestro extracts a comprehensive set of audio features from tracks to aid producers/enthusiasts (and potentially) mix engineers in making informed decisions while leaving room for personal mixing choices. The features extracted provide detailed insights into various aspects of the audio signal, such as volume, frequency content, pitch, rhythm, and more.
 
+## Logic Flow
+
+1. **User Interface (Java Web Application)**:
+   - Users interact with the application through a web interface to upload their audio files and receive mixing recommendations.
+
+2. **Backend Processing (Java, C++, Python)**:
+   - **Java**: Manages file uploads and interacts with C++ and Python for processing.
+   - **C++**: Handles advanced audio processing tasks, making it an integral part of the project.
+   - **Python**: Handles feature extraction from processed audio, model training, and prediction using machine learning models.
+
+
+### Explanation of C++ Processing
+
+The C++ component of my program handles performance-critical and advanced audio processing tasks such as normalization, noise reduction, spectral analysis, and harmonic-percussive source separation. These tasks are computationally intensive and benefit from the efficiency and speed of C++ (versus Python). By preprocessing the audio in C++, the data passed to Python is **cleaner and more consistent**, enhancing the quality and reliability of the extracted features and leading to more accurate predictions and better mixing recommendations.
+
+## Detailed Logic Flow
+
+### 1. User Uploads Audio File
+
+- **Step**: The user accesses the web application and uploads their unmixed audio file.
+- **Technology**: Java (Spring Boot), React.js (possibly)
+
+### 2. Backend Receives the File
+
+- **Step**: The Java backend receives the uploaded file and saves it to a designated location.
+- **Technology**: Java (Spring Boot)
+
+### 3. Invoke C++ for Advanced Processing
+
+- **Step**: The Java backend calls C++ functions (using JNI) to perform advanced audio processing tasks.
+- **Technology**: C++
+- **Tasks in C++**:
+  - **Normalization**: Adjusts the audio signal to a standard level.
+  - **Noise Reduction**: Reduces background noise.
+  - **Spectral Analysis**: Analyzes the frequency spectrum using FFT.
+  - **Harmonic-Percussive Source Separation**: Separates harmonic and percussive components.
+
+### 4. Pass Processed Audio to Python for Feature Extraction
+
+- **Step**: The processed audio data from C++ is passed to Python scripts for detailed feature extraction.
+- **Technology**: Python
+
+### 5. Python Feature Extraction and Prediction
+
+- **Sub-Steps**:
+  - **Feature Extraction (`extract_features.py`)**: Extract detailed features from the processed audio data.
+  - **Prediction (`predict.py`)**: Use the trained model to analyze the features and provide mixing recommendations.
+- **Technology**: Python
+
+### 6. Return Recommendations to User
+
+- **Step**: The Python script returns the analysis results to the Java backend.
+- **Technology**: Python, Java (Spring Boot)
+- **Final Step**: The Java backend sends the recommendations back to the user via the web interface.
+- **Technology**: Java (Spring Boot)
+
+## Components
+
+### 1. C++ Audio Processing
+
+Handles advanced audio processing tasks.
+- **Files**: `audio_processor.h`, `audio_processor.cpp`, `main.cpp`
+- **Build Configuration**: `CMakeLists.txt`
+
+### 2. JNI Integration
+
+Allows Java to call C++ functions.
+- **Java Class**: `NativeAudioProcessor.java`
+- **Generated C++ Header**: `NativeAudioProcessor.h`
+- **JNI Implementation**: `NativeAudioProcessor.cpp`
+
+### 3. Java Web Application (Spring Boot)
+
+Manages the user interface and backend processing.
+- **Main Application**: `MixingAssistantApplication.java`
+- **REST Controller**: `AudioController.java`
+- **Build Configuration**: `build.gradle`
+
+### 4. Python Scripts
+
+Handles feature extraction and machine learning.
+- **Feature Extraction**: `extract_features.py`
+- **Model Training**: `train_model.py`
+- **Prediction**: `predict.py`
 
 
 # extract_features.py
