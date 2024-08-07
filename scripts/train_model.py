@@ -20,30 +20,35 @@ def load_features(filepath):
     features = joblib.load(filepath)
     features_array = np.array([flatten_features(feature) for feature in features])
     features_array = np.array(features_array, dtype=float)
-    return features_array
+    
+    # Extract labels
+    labels = {
+        'dynamic_range': np.array([feature['dynamic_range'] for feature in features]),
+        # Add more labels as needed, just testing dynamic range right now
+    }
+    
+    return features_array, labels
 
 def train_model(features_array, labels):
-    X_train, X_test, y_train, y_test = train_test_split(features_array, labels, test_size=0.2, random_state=42)
-    model = RandomForestRegressor(
-        n_estimators=200,
-        max_depth=10,
-        min_samples_split=5,
-        min_samples_leaf=4,
-        max_features='sqrt',
-        bootstrap=True,
-        random_state=42,
-        n_jobs=-1
-    )
-    model.fit(X_train, y_train)
-    predictions = model.predict(X_test)
-    mse = mean_squared_error(y_test, predictions)
-    print(f"Mean Squared Error: {mse}")
-    return model
+    for label_name, label_values in labels.items():
+        X_train, X_test, y_train, y_test = train_test_split(features_array, label_values, test_size=0.2, random_state=42)
+        model = RandomForestRegressor(
+            n_estimators=200,
+            max_depth=10,
+            min_samples_split=5,
+            min_samples_leaf=4,
+            max_features='sqrt',
+            bootstrap=True,
+            random_state=42,
+            n_jobs=-1
+        )
+        model.fit(X_train, y_train)
+        predictions = model.predict(X_test)
+        mse = mean_squared_error(y_test, predictions)
+        print(f"Mean Squared Error for {label_name}: {mse}")
+        joblib.dump(model, os.path.abspath(f"models/{label_name}_model.pkl"))
+        print(f"Model for {label_name} saved to models/{label_name}_model.pkl")
 
 if __name__ == "__main__":
-    features_array = load_features("data/processed/features.pkl")
-    labels = np.random.rand(len(features_array))  # Replace with actual labels
-    model = train_model(features_array, labels)
-    model_path = os.path.abspath("models/mixing_model.pkl")
-    joblib.dump(model, model_path)
-    print(f"Model saved to {model_path}")
+    features_array, labels = load_features("data/processed/features.pkl")
+    train_model(features_array, labels)

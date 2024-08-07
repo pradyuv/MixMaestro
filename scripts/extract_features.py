@@ -2,6 +2,7 @@ import librosa
 import numpy as np
 import os
 import joblib
+import pandas as pd
 
 def extract_features(file_path):
     """
@@ -13,17 +14,7 @@ def extract_features(file_path):
     Returns:
     dict: A dictionary containing extracted audio features.
     """
-
-    # Load audio file
-    # y: the audio time series
-    # sr: sampling rate
-
     y, sr = librosa.load(file_path)
-
-    # Extract audio features
-    # rms: Root Mean Square (RMS) energy
-    # spectral_centroid: centre of mass of spectrum
-
     features = {
         'rms': librosa.feature.rms(y=y).mean(),  # measures power/loudness
         'peak_amplitude': np.max(np.abs(y)),  # measuring peak amplitude of signal
@@ -44,9 +35,7 @@ def extract_features(file_path):
         'perceptual_sharpness': librosa.feature.spectral_contrast(y=y, sr=sr).mean(axis=1).std(),  # relates to perceived sharpness
         'perceptual_spread': librosa.feature.spectral_contrast(y=y, sr=sr).mean(axis=1).mean(),  # relates to perceived spread
         'dynamic_range': np.max(librosa.feature.rms(y=y)) - np.min(librosa.feature.rms(y=y)),  # measures the difference between the quietest and loudest parts of the signal
-        # Can add more features here 
     }
-
     return features
 
 def process_directory(directory):
@@ -58,49 +47,30 @@ def process_directory(directory):
 
     Returns:
     list: A list of dictionaries, each containing features of an audio file.
-    
     """
-
-    # Init empty list to hold the features of audio file
-
     features = []
 
     for file in os.listdir(directory):
-        # Check if file has .wav extension (uncompressed and lossless)
         if file.endswith(".wav"):
+            file_path = os.path.join(directory, file)
+            feature = extract_features(file_path)
+            features.append(feature)
 
-            # Construct full file path
-
-            file_path = os.path.join(directory,file)
-
-            # Extract features from the audio file and append
-
-            features.append(extract_features(file_path))
-
-
-    return features        
-            
+    return features
 
 if __name__ == "__main__":
-
-    # Define the paths to the raw and processed data (music) directories
     raw_data_dir = os.path.abspath("data/raw/")
     processed_data_dir = os.path.abspath("data/processed/")
-
-    # Print the directory paths to ensure they are correct
+    
     print("Raw Data Directory:", raw_data_dir)
     print("Processed Data Directory:", processed_data_dir)
 
-    # Check if the raw data directory exists
     if not os.path.exists(raw_data_dir):
         print(f"Error: The directory {raw_data_dir} does not exist.")
     else:
-        # Process the directory of raw audio files and extract the features
         features = process_directory(raw_data_dir)
 
-        # Ensure the processed data directory exists
         os.makedirs(processed_data_dir, exist_ok=True)
 
-        # Save extracted features to a file using joblib
         joblib.dump(features, os.path.join(processed_data_dir, "features.pkl"))
         print(f"Features saved to {os.path.join(processed_data_dir, 'features.pkl')}")
