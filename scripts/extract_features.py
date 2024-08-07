@@ -33,7 +33,7 @@ def extract_features(file_path):
         'spectral_rolloff': librosa.feature.spectral_rolloff(y=y, sr=sr).mean(),  # frequency below which a specified percentage of the total spectral energy lies, useful for distinguishing between harmonic/percussive sounds
         'mfcc': librosa.feature.mfcc(y=y, sr=sr, n_mfcc=13).mean(axis=1),  # short term power spectrum (speech and audio processing)
         'chroma_stft': librosa.feature.chroma_stft(y=y, sr=sr).mean(axis=1),  # relates to 12 different pitch classes (notes), harmonic and chordal content analysis
-        'tempo': librosa.feature.rhythm.tempo(y=y, sr=sr)[0],  # detects tempo of audio
+        'tempo': librosa.beat.tempo(y=y, sr=sr)[0],  # detects tempo of audio
         'spectral_contrast': librosa.feature.spectral_contrast(y=y, sr=sr).mean(axis=1),  # measures difference in amplitude between peaks and valleys in the sound spectrum 
         'tonnetz': librosa.feature.tonnetz(y=y, sr=sr).mean(axis=1),  # represents tonal properties, mapping to harmonic space
         'hnr': librosa.effects.harmonic(y=y).mean() / (librosa.effects.percussive(y=y).mean() + 1e-6),  # harmonic-to-noise ratio, distinguishing between harmonic content and noise

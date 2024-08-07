@@ -16,3 +16,4 @@ data/raw/*.wav
 
 # Ensure the models directory is tracked
 !models/
+data/test/*.wav
