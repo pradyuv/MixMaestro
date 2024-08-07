@@ -38,7 +38,7 @@ The C++ component of my program handles performance-critical and advanced audio 
 - **Tasks in C++**:
   - **Normalization**: Adjusts the audio signal to a standard level.
   - **Noise Reduction**: Reduces background noise.
-  - **Spectral Analysis**: Analyzes the frequency spectrum using FFT.
+  - **Spectral Analysis**: Analyzes the frequency spectrum using [FFT](https://www.nti-audio.com/en/support/know-how/fast-fourier-transform-fft#:~:text=The%20%22Fast%20Fourier%20Transform%22%20(,frequency%20information%20about%20the%20signal.).
   - **Harmonic-Percussive Source Separation**: Separates harmonic and percussive components.
 
 ### 4. Pass Processed Audio to Python for Feature Extraction
